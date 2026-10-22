@@ -7,3 +7,4 @@ __pycache__/
 .pytest_cache/
 cache/
 reports/*/events_*.csv.gz
+*.egg-info/
