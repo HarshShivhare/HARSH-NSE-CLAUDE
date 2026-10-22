@@ -1,0 +1,68 @@
+# Pre-registered hypothesis family (V24). Written 2026-10-22 BEFORE any holding-period
+# return of these events was computed or viewed. Only event counts, timing and the
+# distribution of the reaction (the signal input) were inspected while building the dataset.
+# Commit this file to git BEFORE running it.
+#
+# REVISION 1 (2026-10-22, BEFORE the first run; no holding-period return was computed or viewed).
+# Fixes the blockers in docs/REVIEW_V24.md. Hypotheses, sides, holds, cost models, the cutoff rule
+# (DEV median of |reaction_excess|, re-fit on the revised dataset) and pass rules are UNCHANGED.
+# Dataset changes (src/nse_edge/features/results.py):
+#  1. Anchor = an actual results filing: "Financial Result Updates"; "Outcome of Board Meeting" with
+#     results text (any category); or FINANCIAL_RESULTS text saying results were submitted/approved.
+#     Notices ("to be held", "scheduled", "intimation", "call with media", "to announce results")
+#     never anchor. The 45-day cluster is measured from the anchor, not chained.
+#  2. Events whose holding window (entry .. R+10, inclusive) contains a dividend ex-date (record date
+#     or book-closure start, parsed from announcements; T+1 => ex-date = record date) are dropped.
+#  3. Special sessions 2024-03-02, 2024-05-18, 2025-10-21 are non-sessions in both the stock and NIFTY
+#     calendars, for this dataset only (gap_events unchanged, byte-identical).
+#  Usable events 723 -> 616 (DEV 554 -> 464, VAL 169 -> 152); unique entry sessions DEV 145, VAL 44.
+#  Known limitations (accepted, not fixed): April feed holes (review #4); ~9 anchors possibly one
+#  session late (only a generic board outcome preceded the filing); 17 press-release-only quarters
+#  are not events; futures roll not modelled; survivorship (today's universe).
+#  Cost models (config/settings.yaml costs_delivery / costs_futures) were restored to the reviewed
+#  values (35.32 / 13.58 bps) after they went missing from the working tree.
+revision: 1
+
+family: results_drift_v1
+dataset: results_events
+written: "2026-10-22"
+author: Harsh Shivhare
+family_alpha: 0.05          # Bonferroni over 2 tests -> per-test CI level 0.975
+
+defaults:
+  reaction_cutoff:          # "large" reaction, frozen from DEV and applied unchanged to VALIDATION
+    column: abs_reaction_excess   # |stock - NIFTY| return, base close -> reaction-day close
+    quantile: 0.50
+    fit_on: DEV
+  secondary_holds: [1, 3, 10]
+
+pass_rules:                 # must hold in DEV AND in VALIDATION, separately
+  min_sessions: 20          # unique entry dates (results cluster heavily in season)
+  mean_net_bps_gt: 0
+  trimmed_net_bps_gt: 0
+  ci_lo_net_bps_gt: 0
+  top5pct_share_net_lt: 0.5
+
+hypotheses:
+  - id: H4A
+    name: positive_results_drift_long
+    rationale: >
+      Investors under-react to earnings news (post-earnings-announcement drift). After a
+      large positive stock-specific reaction to quarterly results, the stock keeps
+      outperforming over the following week. Tradable as a cash delivery long.
+    population: {reaction: positive}
+    side: continuation
+    hold: 5                 # enter 09:20 on R+1, exit at close of R+5
+    cost_model: delivery
+
+  - id: H4B
+    name: negative_results_drift_short
+    rationale: >
+      Same under-reaction mechanism on bad news: after a large negative reaction the
+      stock keeps underperforming. Overnight shorts are only possible through stock
+      futures, so futures costs apply (spot return used as the futures proxy; roll and
+      basis ignored, lot size ~ Rs 5 lakh).
+    population: {reaction: negative}
+    side: continuation
+    hold: 5
+    cost_model: futures

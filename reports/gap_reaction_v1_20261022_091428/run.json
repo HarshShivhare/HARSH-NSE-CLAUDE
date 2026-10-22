@@ -1,0 +1,72 @@
+{
+  "family": "gap_reaction_v1",
+  "family_sha256": "5a5dcb17a35cf5d1a35c21d181916ca9433279c12a6fb6ea4375cb9db8890150",
+  "settings_sha256": "19af13acfb056eea0d7cba22ed65960105e06d98f5a9e13cfe5ac992b6316ca6",
+  "code_sha256": "596c1fc91cd82739ac03a726747312549b479253e815f4f0288a6cd9059ae9dc",
+  "rerun_reason": "reproducibility check on user's machine (handbook gate 2)",
+  "cost_round_trip_bps": 20.62812,
+  "ci_level": 0.9875,
+  "gap_cutoff_abs_excess_gap": 0.006251742702311014,
+  "audit": {
+    "lock_dropped_date": 1223886,
+    "symbols": 100,
+    "symbol_sessions": 55912,
+    "complete": 55613,
+    "bad_ohlc_sessions": 12,
+    "max_session": "2025-12-31",
+    "benchmark_sessions": 577,
+    "announcements_lock_dropped_broadcast_time": 0,
+    "announcements": 34863,
+    "gap_events_eligible": 52845
+  },
+  "verdicts": {
+    "H1A": {
+      "verdict": "FAIL",
+      "reasons": [
+        "DEV: mean_net_bps=-33.85 not > 0",
+        "DEV: trimmed_net_bps=-35.44 not > 0",
+        "DEV: ci_lo_net_bps=-50.55 not > 0",
+        "VALIDATION: mean_net_bps=-22.75 not > 0",
+        "VALIDATION: trimmed_net_bps=-26.12 not > 0",
+        "VALIDATION: ci_lo_net_bps=-49.07 not > 0"
+      ],
+      "n_total": 1439
+    },
+    "H1B": {
+      "verdict": "FAIL",
+      "reasons": [
+        "DEV: mean_net_bps=-2.58 not > 0",
+        "DEV: trimmed_net_bps=-2.16 not > 0",
+        "DEV: ci_lo_net_bps=-17.32 not > 0",
+        "VALIDATION: mean_net_bps=-11.41 not > 0",
+        "VALIDATION: trimmed_net_bps=-10.58 not > 0",
+        "VALIDATION: ci_lo_net_bps=-23.78 not > 0"
+      ],
+      "n_total": 5287
+    },
+    "H2": {
+      "verdict": "FAIL",
+      "reasons": [
+        "DEV: mean_net_bps=-11.95 not > 0",
+        "DEV: trimmed_net_bps=-15.41 not > 0",
+        "DEV: ci_lo_net_bps=-48.74 not > 0",
+        "VALIDATION: trimmed_net_bps=-3.87 not > 0",
+        "VALIDATION: ci_lo_net_bps=-41.64 not > 0",
+        "VALIDATION: top5pct_share_net=5.74 not < 0.5"
+      ],
+      "n_total": 407
+    },
+    "H3": {
+      "verdict": "FAIL",
+      "reasons": [
+        "DEV: mean_net_bps=-15.90 not > 0",
+        "DEV: trimmed_net_bps=-17.95 not > 0",
+        "DEV: ci_lo_net_bps=-42.73 not > 0",
+        "VALIDATION: mean_net_bps=-20.00 not > 0",
+        "VALIDATION: trimmed_net_bps=-20.05 not > 0",
+        "VALIDATION: ci_lo_net_bps=-57.49 not > 0"
+      ],
+      "n_total": 572
+    }
+  }
+}

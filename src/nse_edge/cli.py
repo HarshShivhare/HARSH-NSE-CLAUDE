@@ -19,6 +19,7 @@ def main(argv=None) -> int:
     sub.add_parser("status")
     b = sub.add_parser("build")
     b.add_argument("--rebuild", action="store_true")
+    b.add_argument("--dataset", default="gap_events", choices=["gap_events", "results_events"])
     r = sub.add_parser("run")
     r.add_argument("family", type=Path)
     r.add_argument("--reps", type=int, default=2000)
@@ -39,8 +40,8 @@ def main(argv=None) -> int:
             print("  (no runs yet)")
         return 0
     if a.cmd == "build":
-        from .research.runner import gap_events
-        _, audit = gap_events(s, rebuild=a.rebuild)
+        from .research.runner import DATASETS
+        _, audit = DATASETS[a.dataset][0](s, rebuild=a.rebuild)
         print(json.dumps(audit, indent=2, default=str))
         return 0
     if a.cmd == "run":

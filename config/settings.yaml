@@ -40,3 +40,28 @@ costs:
   stamp_buy_rate: 0.00003
   gst_rate: 0.18
   slippage_bps_per_side: 5.0
+
+# Multi-day holds (results_drift_v1). Same structure as `costs`; re-verify before any final backtest.
+costs_delivery:             # cash (CNC) long held overnight
+  notional_inr: 50000
+  brokerage_rate: 0.0       # Zerodha equity delivery is brokerage-free
+  brokerage_cap_per_order: 0.0
+  stt_buy_rate: 0.001       # 0.1% on both legs
+  stt_sell_rate: 0.001
+  exchange_txn_rate: 0.0000307
+  sebi_rate: 0.000001
+  stamp_buy_rate: 0.00015
+  dp_charge_inr: 13.0       # per scrip per sell day, GST added (current Zerodha DP is ~Rs 15.93 incl. GST)
+  gst_rate: 0.18
+  slippage_bps_per_side: 5.0
+
+costs_futures:              # stock futures (overnight shorts); roll and basis not modelled
+  notional_inr: 500000      # ~ one lot
+  brokerage_rate: 0.0003
+  brokerage_cap_per_order: 20.0
+  stt_sell_rate: 0.0002     # 0.02% since 2024-10-01 (0.0125% before; conservative)
+  exchange_txn_rate: 0.0000173
+  sebi_rate: 0.000001
+  stamp_buy_rate: 0.00002
+  gst_rate: 0.18
+  slippage_bps_per_side: 5.0
