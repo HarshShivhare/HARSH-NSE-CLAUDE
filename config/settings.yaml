@@ -1,0 +1,42 @@
+# nse-edge settings. Paths are relative to the project root unless absolute.
+# Data stays in the old repo (read-only); nothing here ever writes into it.
+
+paths:
+  stock_dir: ../HARSH-NSE-TRADING-SYSTEM/data
+  stock_glob: "NSE_*_5minute_20230901_20260901.parquet"
+  index_dir: ../HARSH-NSE-TRADING-SYSTEM/data/v22_indices
+  benchmark_file: NSE_INDEX_NIFTY_50_5minute_20230901_20251231.parquet
+  announcements: ../HARSH-NSE-TRADING-SYSTEM/data/v22_announcements/announcements_normalized.parquet
+  cache_dir: cache
+  reports_dir: reports
+  registry_file: registry/runs.jsonl
+
+timezone: Asia/Kolkata
+
+# Research split. Changing these after a VALIDATION run invalidates every verdict.
+splits:
+  DEV:        ["2023-09-01", "2025-06-30"]
+  VALIDATION: ["2025-07-01", "2025-12-31"]
+
+# Final out-of-sample period. Fail-closed: loaders drop and audit any bar after
+# research_end. There is deliberately no CLI flag to unlock this.
+research_end: "2025-12-31 23:59:59"
+final_oos: ["2026-01-01", "2026-08-31"]
+
+session:
+  open: "09:15"
+  last_bar_start: "15:25"
+  bar_minutes: 5
+  bars_per_full_session: 75
+
+costs:
+  # Approximate Zerodha NSE equity intraday (MIS). Re-verify before any final backtest.
+  notional_inr: 50000
+  brokerage_rate: 0.0003
+  brokerage_cap_per_order: 20.0
+  stt_sell_rate: 0.00025
+  exchange_txn_rate: 0.0000307
+  sebi_rate: 0.000001
+  stamp_buy_rate: 0.00003
+  gst_rate: 0.18
+  slippage_bps_per_side: 5.0

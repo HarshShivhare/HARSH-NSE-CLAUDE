@@ -1,0 +1,70 @@
+# Pre-registered hypothesis family. Written 2026-10-22 BEFORE any of these
+# specific tests were run on the data. Editing this file after a run is
+# refused by the registry (sha256 check) - create a new family file instead.
+#
+# Pre-run revision (2026-10-22, still before any outcome was computed), after an
+# independent code review: H1A/H3 use MATERIAL news (category != OTHER) because ~60%
+# of 'any filing' events were trivial notices; concentration rule now scales with
+# sample size (top 5% of events); days with announcement-feed holes are excluded.
+
+family: gap_reaction_v1
+written: "2026-10-22"
+author: Harsh Shivhare
+family_alpha: 0.05          # Bonferroni: per-test CI level = 1 - alpha / n_tests
+
+defaults:
+  gap_cutoff:               # frozen from DEV only, then applied unchanged to VALIDATION
+    column: abs_excess_gap
+    quantile: 0.80
+    fit_on: DEV
+    population: all_eligible
+  exit: eod                 # close of the 15:15 bar (15:20), before MIS auto square-off
+  return: raw               # unhedged stock return (what an MIS trade actually earns)
+  secondary_returns: [relative]
+  secondary_horizons: [30, 60, 120]
+
+pass_rules:                 # must hold in DEV AND in VALIDATION, separately
+  min_sessions: 30
+  mean_net_bps_gt: 0
+  trimmed_net_bps_gt: 0
+  ci_lo_net_bps_gt: 0
+  top5pct_share_net_lt: 0.5
+
+hypotheses:
+  - id: H1A
+    name: news_gap_continuation
+    rationale: >
+      A large stock-specific opening gap that follows an overnight material
+      corporate announcement (any category except OTHER) reflects new information that is incorporated gradually,
+      so the gap direction continues into the close.
+    population: {news: material}
+    side: continuation
+    entry: "09:20"
+
+  - id: H1B
+    name: no_news_gap_reversal
+    rationale: >
+      A large stock-specific gap with no announcement in the previous 24h is
+      more likely liquidity/noise driven and partially reverses intraday.
+    population: {news: none_24h}
+    side: reversal
+    entry: "09:20"
+
+  - id: H2
+    name: results_gap_continuation
+    rationale: >
+      Earnings announcements are the most information-dense catalyst; large
+      result-driven gaps should show the strongest post-announcement drift.
+    population: {news: results}
+    side: continuation
+    entry: "09:20"
+
+  - id: H3
+    name: confirmed_news_gap_continuation
+    rationale: >
+      The market's initial reaction disambiguates direction: if the first 15
+      minutes (09:15-09:30, relative to NIFTY) move in the gap direction, the
+      news gap continues. Entry only after confirmation is observable.
+    population: {news: material, first15_confirms: true}
+    side: continuation
+    entry: "09:30"
